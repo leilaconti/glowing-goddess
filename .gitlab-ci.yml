@@ -1,0 +1,52 @@
+stages: 
+  - install
+  - build 
+  - test 
+  - deploy
+install:
+  image: node:12-alpine
+  stage: install
+  script:
+    - npm install
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    policy: pull-push
+    paths:
+      - node_modules/
+  only:
+    refs:
+      - merge_requests
+      - develop
+build:
+  image: node:12-alpine
+  stage: build
+  script:
+    - npx run build
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    policy: pull-push
+    paths:
+      - node_modules/
+      - public/
+  only:
+    refs:
+      - merge_requests
+      - develop
+test:
+  image: node:12-alpine
+  stage: test
+  script:
+    - npm run test:coverage
+    - echo "SUCCESS"
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    policy: pull-push
+    paths:
+      - node_modules/
+      - public/
+  only:
+    refs:
+      - merge_requests
+      - develop
+
+  
